@@ -23,6 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.droidcon.destress.domain.HistoryViewModel
 import com.droidcon.destress.ui.theme.DeStressTheme
 
 
@@ -31,6 +34,8 @@ import com.droidcon.destress.ui.theme.DeStressTheme
 @Composable
 fun App() {
     var currentDestination by remember { mutableStateOf(Destination.Home) }
+    val viewModel: HistoryViewModel = viewModel()
+    val history by viewModel.history.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -53,9 +58,9 @@ fun App() {
         Box(modifier = Modifier.padding(contentPadding)) {
             when (currentDestination) {
                 Destination.Home -> HomeScreen()
-                Destination.Breath -> BreathScreen()
-                Destination.Focus -> FocusScreen()
-                Destination.History -> HistoryScreen()
+                Destination.Breath -> BreathScreen(viewModel::breathComplete)
+                Destination.Focus -> FocusScreen(viewModel::focusComplete)
+                Destination.History -> HistoryScreen(history)
             }
         }
     }
