@@ -36,6 +36,7 @@ fun App() {
     var currentDestination by remember { mutableStateOf(Destination.Home) }
     val viewModel: HistoryViewModel = viewModel()
     val history by viewModel.history.collectAsStateWithLifecycle()
+    val duration by viewModel.duration.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -57,9 +58,9 @@ fun App() {
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             when (currentDestination) {
-                Destination.Home -> HomeScreen()
-                Destination.Breath -> BreathScreen(viewModel::breathComplete)
-                Destination.Focus -> FocusScreen(viewModel::focusComplete)
+                Destination.Home -> HomeScreen(viewModel::setDuration)
+                Destination.Breath -> BreathScreen(duration, viewModel::breathComplete)
+                Destination.Focus -> FocusScreen(duration, viewModel::focusComplete)
                 Destination.History -> HistoryScreen(history)
             }
         }

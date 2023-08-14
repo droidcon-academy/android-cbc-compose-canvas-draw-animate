@@ -9,6 +9,9 @@ import kotlin.time.Duration.Companion.seconds
 
 class HistoryViewModel : ViewModel() {
 
+    private val _duration: MutableStateFlow<Int> = MutableStateFlow(30)
+    val duration: StateFlow<Int> = _duration
+
     private val _history: MutableStateFlow<List<RelaxEvent>> = MutableStateFlow(emptyList())
     val history: StateFlow<List<RelaxEvent>> = _history
 
@@ -18,6 +21,10 @@ class HistoryViewModel : ViewModel() {
 
     fun focusComplete(durationSeconds: Int) {
         addEvent(durationSeconds, RelaxType.DeepFocus)
+    }
+
+    fun setDuration(duration: Int) {
+        _duration.value = duration
     }
 
     private fun addEvent(durationSeconds: Int, type: RelaxType) {
