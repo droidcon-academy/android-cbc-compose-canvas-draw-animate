@@ -9,11 +9,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun FocusBox(isRunning: Boolean = true, modifier: Modifier = Modifier) {
-    if (isRunning)
+fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
+    if (isRunning) {
         Box(modifier.background(Color.Green))
-    else
+    } else {
         Box(modifier.background(Color.White))
+    }
 }
 
 @Preview

@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Timer(
+    modifier:Modifier = Modifier,
     durationSeconds: Int = 10,
     onValueChange: (Int) -> Unit = {},
     onStart: () -> Unit = {},
@@ -40,7 +41,7 @@ fun Timer(
 
     Button(
         onClick = { isRunning = true; onStart() },
-        modifier = Modifier.widthIn(80.dp),
+        modifier = modifier.widthIn(80.dp),
         enabled = !isRunning
     ) {
         if (isRunning)

@@ -18,13 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droidcon.destress.R
 import com.droidcon.destress.ui.component.StepSlider
 import com.droidcon.destress.ui.theme.DeStressTheme
 
 @Composable
-fun HomeScreen(setDuration:(Int)->Unit) {
+fun HomeScreen(setDuration: (Int) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.welcome),
@@ -75,14 +74,12 @@ fun HomeScreen(setDuration:(Int)->Unit) {
     }
 }
 
-
-
 @Preview
 @Composable
 private fun HomePreview() {
     DeStressTheme {
         Surface {
-            HomeScreen({})
+            HomeScreen {}
         }
     }
 }
