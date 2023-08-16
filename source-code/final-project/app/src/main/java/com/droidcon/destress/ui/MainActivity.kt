@@ -1,4 +1,4 @@
-package com.droidcon.destress
+package com.droidcon.destress.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

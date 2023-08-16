@@ -44,3 +44,8 @@ data class RelaxEvent(val type: RelaxType, val start: Instant, val duration: Int
 enum class RelaxType {
     DeepFocus, DeepBreath
 }
+
+val testList = listOf(
+    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10)
+)

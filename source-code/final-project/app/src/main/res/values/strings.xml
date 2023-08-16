@@ -4,4 +4,6 @@
     <string name="start">Start</string>
     <string name="time_label">Choose how long you want to de-stress</string>
     <string name="seconds">Seconds</string>
+    <string name="breath_instructions">Take a deep breath, In… Out</string>
+    <string name="focus_instructions">Focus on your breath.\nIf a thought pops up, gently let it go.</string>
 </resources>
