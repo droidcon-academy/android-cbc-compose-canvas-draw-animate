@@ -7,13 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.droidcon.destress.ui.theme.Pond1
+import com.droidcon.destress.ui.theme.Start
 
 @Composable
 fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     if (isRunning) {
-        Box(modifier.background(Color.Green))
+        Box(modifier.background(Pond1))
     } else {
-        Box(modifier.background(Color.White))
+        Box(modifier.background(Start))
     }
 }
 
