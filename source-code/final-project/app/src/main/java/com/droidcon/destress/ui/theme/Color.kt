@@ -15,7 +15,8 @@ val Start = Color(0xFF443F4E)
 // Breathe
 val Sky = Color(0xFF03A9F4)
 val Cloud = Color(0xFFB4E3F8)
-val Sun = Color(0xFFFFC107)
+val Sun1 = Color(0xFFF7E1A1)
+val Sun2 = Color(0xFFD89102)
 
 // Focu
 val LillyPad1 = Color(0xFF8BC34A)

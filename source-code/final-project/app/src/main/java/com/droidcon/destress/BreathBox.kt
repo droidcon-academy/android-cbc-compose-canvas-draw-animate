@@ -1,5 +1,6 @@
 package com.droidcon.destress
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -13,12 +14,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.tooling.preview.Preview
+import com.droidcon.destress.ui.theme.Cloud
 import com.droidcon.destress.ui.theme.Sky
 import com.droidcon.destress.ui.theme.Start
-import com.droidcon.destress.ui.theme.Sun
+import com.droidcon.destress.ui.theme.Sun1
+import com.droidcon.destress.ui.theme.Sun2
 
+
+val skyBrush = Brush.radialGradient(listOf(Cloud, Sky))
+val sunBrush = Brush.radialGradient(listOf(Sun2, Sun1))
 @Composable
 fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     val infiniteTransition = rememberInfiniteTransition(label = "breath transition")
@@ -31,11 +38,11 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
         ), label = "sun size"
     )
     if (isRunning) {
-        Canvas(modifier.background(Sky)) {
+        Canvas(modifier.background(skyBrush)) {
             withTransform({
                 scale(scaleX = breathPulse, scaleY = breathPulse)
             }) {
-                drawCircle(color = Sun, radius = size.width / 5, center = center)
+                drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
             }
         }
     } else {
