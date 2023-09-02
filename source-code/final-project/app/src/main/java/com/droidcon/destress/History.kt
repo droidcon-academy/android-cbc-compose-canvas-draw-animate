@@ -38,24 +38,13 @@ fun History(
     ) {
         val barWidthPx = 1.dp.toPx()
         drawRect(Grid, style = Stroke(barWidthPx))
-        val horizontalLines = 3
-        val sectionSize = size.height / (horizontalLines + 1)
-        repeat(horizontalLines) { i ->
-            val startY = sectionSize * (i + 1)
-            drawLine(
-                Grid,
-                start = Offset(0F, startY),
-                end = Offset(size.width, startY),
-                strokeWidth = barWidthPx
-            )
-        }
         val days = 7 //ToDO get days from events
         val barWidth = size.width / days
         repeat(days) { day ->// this changes to a loop through the days
             when {
                 (showBreath && showFocus && focusCount > 0 && breathCount > 0) -> {
-                    val focusHeight = size.height * (focusCount / maxEventsPerDay)
-                    val breathHeight = size.height * (breathCount / maxEventsPerDay)
+                    val focusHeight = size.height * (focusCount.toFloat() / maxEventsPerDay)
+                    val breathHeight = size.height * (breathCount.toFloat() / maxEventsPerDay)
                     drawRect(
                         Sun2,
                         topLeft = Offset(day * barWidth, size.height - breathHeight),
@@ -70,7 +59,7 @@ fun History(
                 }
 
                 showBreath && breathCount > 0 -> {
-                    val breathHeight = size.height * (breathCount / maxEventsPerDay)
+                    val breathHeight = size.height * (breathCount.toFloat() / maxEventsPerDay)
                     drawRect(
                         Sun2,
                         topLeft = Offset(day * barWidth, size.height - breathHeight),
@@ -79,7 +68,7 @@ fun History(
                 }
 
                 showFocus && focusCount > 0 -> {
-                    val focusHeight = size.height * (focusCount / maxEventsPerDay)
+                    val focusHeight = size.height * (focusCount.toFloat() / maxEventsPerDay)
                     drawRect(
                         Pond2,
                         topLeft = Offset(day * barWidth, size.height - focusHeight),
@@ -88,6 +77,18 @@ fun History(
 
                 }
             }
+        }
+
+        val horizontalLines = 3
+        val sectionSize = size.height / (horizontalLines + 1)
+        repeat(horizontalLines) { i ->
+            val startY = sectionSize * (i + 1)
+            drawLine(
+                Grid,
+                start = Offset(0F, startY),
+                end = Offset(size.width, startY),
+                strokeWidth = barWidthPx
+            )
         }
     }
 }

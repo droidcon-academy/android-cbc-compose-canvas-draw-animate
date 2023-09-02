@@ -47,5 +47,10 @@ enum class RelaxType {
 
 val testList = listOf(
     RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10)
+    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
+    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
 )
