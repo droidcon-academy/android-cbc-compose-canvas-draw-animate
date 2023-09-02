@@ -36,7 +36,7 @@ import com.droidcon.destress.ui.theme.Lilly2
 import com.droidcon.destress.ui.theme.LillyCore1
 import com.droidcon.destress.ui.theme.LillyCore2
 import com.droidcon.destress.ui.theme.LillyPad2
-import com.droidcon.destress.ui.theme.Pond1
+import com.droidcon.destress.ui.theme.Pond3
 import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Start
 import kotlin.math.min
@@ -50,8 +50,8 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
         val sizedLillyCrownCache = remember(crown) {
             mutableMapOf<Size, RoundedPolygon>()
         }
-        val infiniteTransition = rememberInfiniteTransition(label = "focus transition")
-        val focusRotate by infiniteTransition.animateFloat(
+        val lillyTransition = rememberInfiniteTransition(label = "focus transition")
+        val focusRotate by lillyTransition.animateFloat(
             initialValue = 0f,
             targetValue = 10f,
             animationSpec = infiniteRepeatable(
@@ -59,10 +59,11 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
                 repeatMode = RepeatMode.Reverse
             ), label = "Lilly rotate "
         )
+
         Box(
             modifier
                 .fillMaxSize()
-                .background(Pond1)
+                .background(Pond3)
                 .drawBehind {
                     val sizedLilly = sizedLillyCache.getOrPut(size) {
                         val matrix = calculateMatrix(width = size.width, height = size.height)
