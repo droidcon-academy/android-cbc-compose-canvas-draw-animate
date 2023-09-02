@@ -2,10 +2,17 @@ package com.droidcon.destress
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -17,6 +24,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,12 +50,20 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
         val sizedLillyCrownCache = remember(crown) {
             mutableMapOf<Size, RoundedPolygon>()
         }
+        val infiniteTransition = rememberInfiniteTransition(label = "focus transition")
+        val focusRotate by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 10f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(4_000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "Lilly rotate "
+        )
         Box(
             modifier
                 .fillMaxSize()
                 .background(Pond1)
                 .drawBehind {
-                    lillyPad()
                     val sizedLilly = sizedLillyCache.getOrPut(size) {
                         val matrix = calculateMatrix(width = size.width, height = size.height)
                         RoundedPolygon(petals).apply { transform(matrix) }
@@ -56,25 +72,29 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
                         val matrix = calculateMatrix(width = size.width, height = size.height)
                         RoundedPolygon(crown).apply { transform(matrix) }
                     }
-                    translate(left = -70f, top = -70f) {
-                        scale(scaleX = 0.75f, scaleY = 0.75f) {
-                            drawPath(
-                                path = sizedLilly
-                                    .toPath()
-                                    .asComposePath(),
-                                brush = lillyBrush
-                            )
-                        }
-                        scale(scaleX = 0.2f, scaleY = 0.2f) {
-                            drawPath(
-                                path = sizedCrown
-                                    .toPath()
-                                    .asComposePath(),
-                                brush = lillyCoreBrush
-                            )
+                    rotate(focusRotate) {
+                        lillyPad()
+                        translate(left = -70f, top = -70f) {
+                            scale(scaleX = 0.75f, scaleY = 0.75f) {
+                                drawPath(
+                                    path = sizedLilly
+                                        .toPath()
+                                        .asComposePath(),
+                                    brush = lillyBrush
+                                )
+                            }
+                            scale(scaleX = 0.2f, scaleY = 0.2f) {
+                                drawPath(
+                                    path = sizedCrown
+                                        .toPath()
+                                        .asComposePath(),
+                                    brush = lillyCoreBrush
+                                )
+                            }
                         }
                     }
                 })
+
     } else {
         Box(
             modifier
