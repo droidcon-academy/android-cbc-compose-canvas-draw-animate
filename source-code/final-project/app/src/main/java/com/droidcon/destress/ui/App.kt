@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,9 +36,9 @@ import com.droidcon.destress.ui.theme.Sun2
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    var currentDestination by remember { mutableStateOf(Destination.Home) }
+    var currentDestination by rememberSaveable { mutableStateOf(Destination.Home) }
     val viewModel: HistoryViewModel = viewModel()
-    val history by viewModel.history.collectAsStateWithLifecycle()
+    val sevenDayEventCount by viewModel.sevenDayEventCount.collectAsStateWithLifecycle()
     val duration by viewModel.duration.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -63,7 +64,7 @@ fun App() {
                 Destination.Home -> HomeScreen(viewModel::setDuration)
                 Destination.Breath -> BreathScreen(duration, viewModel::breathComplete)
                 Destination.Focus -> FocusScreen(duration, viewModel::focusComplete)
-                Destination.History -> HistoryScreen(history)
+                Destination.History -> HistoryScreen(sevenDayEventCount)
             }
         }
     }

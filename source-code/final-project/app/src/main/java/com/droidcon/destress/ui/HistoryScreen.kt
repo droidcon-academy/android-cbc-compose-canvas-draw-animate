@@ -2,7 +2,6 @@ package com.droidcon.destress.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Surface
@@ -17,18 +16,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidcon.destress.History
-import com.droidcon.destress.domain.RelaxEvent
-import com.droidcon.destress.domain.RelaxType
+import com.droidcon.destress.domain.DayCount
 import com.droidcon.destress.domain.testList
 import com.droidcon.destress.ui.theme.DeStressTheme
 
 @Composable
-fun HistoryScreen(events: List<RelaxEvent>) {
+fun HistoryScreen(events: List<DayCount>) {
     var showBreath by remember { mutableStateOf(true) }
     var showFocus by remember { mutableStateOf(true) }
     Column {
-        val focusCount = events.count { it.type == RelaxType.DeepFocus }
-        val breathCount = events.size - focusCount
+        val focusCount = events.last().focusCount
+        val breathCount = events.last().breathCount
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "Your history for the past ${events.size} days."
+        )
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "You completed $focusCount focus events and $breathCount breath events today."
+        )
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "Your max daily focus events in ${events.size} days: "
+        )
+        Text(modifier = Modifier.padding(8.dp), text = "${events.maxOf { it.focusCount }}")
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "Your max daily breath events in ${events.size} days: "
+        )
+        Text(modifier = Modifier.padding(8.dp), text = "${events.maxOf { it.breathCount }}")
+        History(
+            modifier = Modifier.weight(1f),
+            events = events,
+            showFocus = showFocus,
+            showBreath = showBreath
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = showBreath,
@@ -45,13 +67,6 @@ fun HistoryScreen(events: List<RelaxEvent>) {
             Text("Focus Activity")
 
         }
-        Text(modifier = Modifier.padding(8.dp), text = "You completed $focusCount focus events and $breathCount breath events today.")
-        History(
-            modifier = Modifier.weight(1f),
-            events = events,
-            showFocus = showFocus,
-            showBreath = showBreath
-        )
 
     }
 }

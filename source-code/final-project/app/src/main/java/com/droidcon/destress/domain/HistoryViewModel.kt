@@ -9,11 +9,14 @@ import kotlin.time.Duration.Companion.seconds
 
 class HistoryViewModel : ViewModel() {
 
-    private val _duration: MutableStateFlow<Int> = MutableStateFlow(30)
+    private val _duration: MutableStateFlow<Int> = MutableStateFlow(10)
     val duration: StateFlow<Int> = _duration
 
     private val _history: MutableStateFlow<List<RelaxEvent>> = MutableStateFlow(emptyList())
-    val history: StateFlow<List<RelaxEvent>> = _history
+    //val history: StateFlow<List<RelaxEvent>> = _history
+
+    private val _sevenDayEventCount: MutableStateFlow<List<DayCount>> = MutableStateFlow(testList)
+    val sevenDayEventCount: StateFlow<List<DayCount>> = _sevenDayEventCount
 
     fun breathComplete(durationSeconds: Int) {
         addEvent(durationSeconds, RelaxType.DeepBreath)
@@ -36,8 +39,16 @@ class HistoryViewModel : ViewModel() {
             duration = durationSeconds
         )
         _history.value = _history.value + newEvent
+        val (breathCount, focusCount) = sevenDayEventCount.value.last()
+        val newDayCount = when (type) {
+            RelaxType.DeepFocus -> DayCount(focusCount = focusCount + 1, breathCount = breathCount)
+            RelaxType.DeepBreath -> DayCount(focusCount = focusCount, breathCount = breathCount + 1)
+        }
+        _sevenDayEventCount.value = sevenDayEventCount.value.dropLast(1) + newDayCount
     }
 }
+
+data class DayCount(val breathCount: Int, val focusCount: Int)
 
 data class RelaxEvent(val type: RelaxType, val start: Instant, val duration: Int)
 
@@ -46,11 +57,18 @@ enum class RelaxType {
 }
 
 val testList = listOf(
-    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepFocus, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
-    RelaxEvent(type = RelaxType.DeepBreath, Clock.System.now(), 10),
+    DayCount(2, 6),
+    DayCount(0, 1),
+    DayCount(8, 4),
+    DayCount(6, 3),
+    DayCount(4, 2),
+    DayCount(1, 8),
+    DayCount(4, 7),
+    DayCount(4, 2),
+    DayCount(8, 5),
+    DayCount(6, 9),
+    DayCount(1, 10),
+    DayCount(7, 3),
+    DayCount(3, 7),
+    DayCount(0, 0),
 )
