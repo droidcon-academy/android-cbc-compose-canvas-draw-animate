@@ -11,6 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Start = Color(0xFF443F4E)
+val Grid = Color(0xFF443F4E)
 
 // Breathe
 val Sky = Color(0xFF03A9F4)
@@ -18,7 +19,7 @@ val Cloud = Color(0xFFB4E3F8)
 val Sun1 = Color(0xFFF7E1A1)
 val Sun2 = Color(0xFFD89102)
 
-// Focu
+// Focus
 val LillyPad1 = Color(0xFF8BC34A)
 val LillyPad2 = Color(0xFF385F0B)
 val Lilly1 = Color(0xFFE5DAF8)
@@ -30,3 +31,4 @@ val Pond2 = Color(0xFF02C5B4)
 val Pond3 = Color(0xFF132524)
 val Ripple1 = Color(0xFF6E7575)
 val Ripple2 = Color(0xFF373A3A)
+

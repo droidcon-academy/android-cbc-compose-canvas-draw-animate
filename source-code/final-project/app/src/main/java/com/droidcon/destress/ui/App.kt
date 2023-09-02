@@ -27,6 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droidcon.destress.domain.HistoryViewModel
 import com.droidcon.destress.ui.theme.DeStressTheme
+import com.droidcon.destress.ui.theme.Pond2
+import com.droidcon.destress.ui.theme.Sun2
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -75,12 +77,13 @@ fun BottomBar(setDestination: (Destination) -> Unit) {
                 Icon(Icons.Filled.Home, contentDescription = "Home")
             }
             IconButton(onClick = { setDestination(Destination.Breath) }) {
-                Icon(Icons.Filled.Face, contentDescription = "Deep Breath Activity")
+                Icon(Icons.Filled.Face, contentDescription = "Deep Breath Activity", tint = Sun2)
             }
             IconButton(onClick = { setDestination(Destination.Focus) }) {
                 Icon(
                     Icons.Filled.Favorite,
                     contentDescription = "Focus Activity",
+                    tint = Pond2
                 )
             }
             IconButton(onClick = { setDestination(Destination.History) }) {

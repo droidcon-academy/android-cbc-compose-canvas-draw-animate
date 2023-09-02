@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.droidcon.destress.R
 import com.droidcon.destress.ui.component.StepSlider
 import com.droidcon.destress.ui.theme.DeStressTheme
+import com.droidcon.destress.ui.theme.Pond2
+import com.droidcon.destress.ui.theme.Sun2
 
 @Composable
 fun HomeScreen(setDuration: (Int) -> Unit) {
@@ -36,7 +38,11 @@ fun HomeScreen(setDuration: (Int) -> Unit) {
         )
         Spacer(Modifier.size(16.dp))
         Row {
-            Icon(Icons.Filled.Face, contentDescription = "Deep Breath Activity")
+            Icon(
+                Icons.Filled.Face,
+                contentDescription = "Deep Breath Activity",
+                tint = Sun2
+            )
             Text("Deep Breath")
         }
 
@@ -44,6 +50,7 @@ fun HomeScreen(setDuration: (Int) -> Unit) {
             Icon(
                 Icons.Filled.Favorite,
                 contentDescription = "Focus Activity",
+                tint = Pond2
             )
             Text("Focus")
         }
