@@ -62,7 +62,7 @@ fun HomeScreen(setDuration: (Int) -> Unit) {
         )
 
         StepSlider(
-            initialValue = 30,
+            initialValue = 10,
             minValue = 10,
             maxValue = 600,
             label = stringResource(R.string.seconds),

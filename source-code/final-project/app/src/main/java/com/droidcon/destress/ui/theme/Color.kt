@@ -22,7 +22,7 @@ val Sun2 = Color(0xFFD89102)
 // Focus
 val LillyPad1 = Color(0xFF8BC34A)
 val LillyPad2 = Color(0xFF385F0B)
-val Lilly1 = Color(0xFFE5DAF8)
+val Lilly1 = Color(0xFFBE9EF5)
 val Lilly2 = Color(0xFFC5CCF1)
 val LillyCore1 = Color(0xFFFFEB3B)
 val LillyCore2 = Color(0xFFFF9800)

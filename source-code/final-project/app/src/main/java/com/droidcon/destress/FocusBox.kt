@@ -2,61 +2,79 @@ package com.droidcon.destress
 
 import android.graphics.Matrix
 import android.graphics.RectF
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.star
 import com.droidcon.destress.ui.theme.Lilly1
 import com.droidcon.destress.ui.theme.Lilly2
 import com.droidcon.destress.ui.theme.LillyCore1
-import com.droidcon.destress.ui.theme.LillyPad1
+import com.droidcon.destress.ui.theme.LillyCore2
 import com.droidcon.destress.ui.theme.LillyPad2
 import com.droidcon.destress.ui.theme.Pond1
-import com.droidcon.destress.ui.theme.Pond2
 import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Start
-import com.droidcon.destress.ui.theme.Sun1
-import kotlin.math.max
 import kotlin.math.min
 
 @Composable
 fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     if (isRunning) {
-        Box(modifier) {
-            Canvas(
-                Modifier
-                    .fillMaxSize()
-                    .background(Pond1)) {
-                lillyPad()
-                lilly()
-                //drawPath(path = petals.toPath().asComposePath(), color = Lilly1, style = Fill)
-            }
-            PolygonComposableImpl(shape = petals, Lilly2)
-            PolygonComposableImpl(
-                shape = crown,
-                color = LillyCore1,
-                modifier = Modifier.scale(0.2f)
-            )
+        val sizedLillyCache = remember(petals) {
+            mutableMapOf<Size, RoundedPolygon>()
         }
+        val sizedLillyCrownCache = remember(crown) {
+            mutableMapOf<Size, RoundedPolygon>()
+        }
+        Box(
+            modifier
+                .fillMaxSize()
+                .background(Pond1)
+                .drawBehind {
+                    lillyPad()
+                    val sizedLilly = sizedLillyCache.getOrPut(size) {
+                        val matrix = calculateMatrix(width = size.width, height = size.height)
+                        RoundedPolygon(petals).apply { transform(matrix) }
+                    }
+                    val sizedCrown = sizedLillyCrownCache.getOrPut(size) {
+                        val matrix = calculateMatrix(width = size.width, height = size.height)
+                        RoundedPolygon(crown).apply { transform(matrix) }
+                    }
+                    translate(left = -70f, top = -70f) {
+                        scale(scaleX = 0.75f, scaleY = 0.75f) {
+                            drawPath(
+                                path = sizedLilly
+                                    .toPath()
+                                    .asComposePath(),
+                                brush = lillyBrush
+                            )
+                        }
+                        scale(scaleX = 0.2f, scaleY = 0.2f) {
+                            drawPath(
+                                path = sizedCrown
+                                    .toPath()
+                                    .asComposePath(),
+                                brush = lillyCoreBrush
+                            )
+                        }
+                    }
+                })
     } else {
         Box(
             modifier
@@ -68,17 +86,21 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
 }
 
 val petals = RoundedPolygon.star(
-    numVerticesPerRadius = 16, innerRadius = .5f
+    numVerticesPerRadius = 12,
+    innerRadius = 0.5f
 )
 
 val crown = RoundedPolygon.star(
-    numVerticesPerRadius = 16, innerRadius = .8f
+    numVerticesPerRadius = 16,
+    innerRadius = .8f,
+    innerRounding = CornerRounding(radius = 0.1f)
 )
 
-fun DrawScope.lillyPad(color:Color = LillyPad2, style:DrawStyle = Fill) {
+fun DrawScope.lillyPad(color: Color = LillyPad2, style: DrawStyle = Fill) {
+    val diameter = size.width * 0.6f
     translate(
-        left = center.x - size.width / 4,
-        top = center.y - size.height / 4
+        left = center.x - diameter / 2,
+        top = center.y - diameter / 2
     ) {
         drawArc(
             color = color,
@@ -86,48 +108,21 @@ fun DrawScope.lillyPad(color:Color = LillyPad2, style:DrawStyle = Fill) {
             sweepAngle = 330f,
             useCenter = true,
             style = style,
-            size = Size(size.width / 2, size.width / 2)
+            size = Size(diameter, diameter)
         )
     }
 }
 
-fun DrawScope.lilly() {
+val lillyBrush = Brush.radialGradient(listOf(Lilly2, Lilly1))
+val lillyCoreBrush = Brush.radialGradient(listOf(LillyCore2, LillyCore1))
 
-    drawPath(path = petals.toPath().asComposePath(), color = Lilly1, style = Fill)
-    drawCircle(color = Sun1, radius = 10f)
-
-}
-
-@Composable
-internal fun PolygonComposableImpl(
-    shape: RoundedPolygon,
-    color: Color = Color.White,
-    modifier: Modifier = Modifier
-) {
-    val sizedPolygonCache = remember(shape) {
-        mutableMapOf<Size, RoundedPolygon>()
-    }
-    Box(
-        modifier
-            .fillMaxSize()
-            .drawWithContent {
-                drawContent()
-                val sizedPolygon = sizedPolygonCache.getOrPut(size) {
-                    val matrix = calculateMatrix(TheBounds, size.width / 2, size.height)
-                    RoundedPolygon(shape).apply { transform(matrix) }
-                }
-                drawPath(
-                    sizedPolygon
-                        .toPath()
-                        .asComposePath(), color
-                )
-            }
-    )
-}
-
-private val TheBounds = RectF(0f, 0f, 1f, 1f)
-
-internal fun calculateMatrix(bounds: RectF, width: Float, height: Float): Matrix {
+//by default the library creates canonical shapes with a radius of 1 around a center at (0, 0)
+//https://medium.com/androiddevelopers/the-shape-of-things-to-come-1c7663d9dbc0
+private fun calculateMatrix(
+    bounds: RectF = RectF(-1f, -1f, 1f, 1f),
+    width: Float,
+    height: Float
+): Matrix {
     val originalWidth = bounds.right - bounds.left
     val originalHeight = bounds.bottom - bounds.top
     val scale = min(width / originalWidth, height / originalHeight)
@@ -150,4 +145,3 @@ fun PreviewFocusBox() {
 fun PreviewFocusBoxPause() {
     FocusBox(modifier = Modifier.fillMaxSize(), isRunning = false)
 }
-

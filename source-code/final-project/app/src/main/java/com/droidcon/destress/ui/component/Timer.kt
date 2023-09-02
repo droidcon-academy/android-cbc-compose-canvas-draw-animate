@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,8 +25,8 @@ fun Timer(
     onStart: () -> Unit = {},
     onComplete: (Int) -> Unit = {}
 ) {
-    var isRunning by remember { mutableStateOf(false) }
-    var currentValue by remember { mutableStateOf(durationSeconds) }
+    var isRunning by rememberSaveable { mutableStateOf(false) }
+    var currentValue by rememberSaveable { mutableStateOf(durationSeconds) }
     LaunchedEffect(key1 = isRunning, key2 = currentValue) {
         if (currentValue > 0 && isRunning) {
             delay(1000L)
