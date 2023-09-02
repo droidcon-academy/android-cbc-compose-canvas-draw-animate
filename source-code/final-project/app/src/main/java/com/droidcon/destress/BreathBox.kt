@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.tooling.preview.Preview
 import com.droidcon.destress.ui.theme.Cloud
+import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Sky
 import com.droidcon.destress.ui.theme.Start
 import com.droidcon.destress.ui.theme.Sun1
@@ -46,7 +49,12 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             }
         }
     } else {
-        Box(modifier.background(Start))
+        Box(
+            modifier
+                .background(Start)
+                .drawBehind {
+                    drawCircle(Ripple1, size.width / 5, center = center, style = Stroke(2.0f))
+                })
     }
 }
 
@@ -54,4 +62,10 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
 @Composable
 fun PreviewBreathBox() {
     BreathBox(modifier = Modifier.fillMaxSize())
+}
+
+@Preview
+@Composable
+fun PreviewBreathBoxPause() {
+    BreathBox(modifier = Modifier.fillMaxSize(), isRunning = false)
 }

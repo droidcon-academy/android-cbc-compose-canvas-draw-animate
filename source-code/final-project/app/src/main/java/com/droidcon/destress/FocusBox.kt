@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
@@ -17,7 +18,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.graphics.shapes.RoundedPolygon
@@ -28,6 +31,8 @@ import com.droidcon.destress.ui.theme.LillyCore1
 import com.droidcon.destress.ui.theme.LillyPad1
 import com.droidcon.destress.ui.theme.LillyPad2
 import com.droidcon.destress.ui.theme.Pond1
+import com.droidcon.destress.ui.theme.Pond2
+import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Start
 import com.droidcon.destress.ui.theme.Sun1
 import kotlin.math.max
@@ -37,7 +42,10 @@ import kotlin.math.min
 fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     if (isRunning) {
         Box(modifier) {
-            Canvas(Modifier.fillMaxSize().background(Pond1)) {
+            Canvas(
+                Modifier
+                    .fillMaxSize()
+                    .background(Pond1)) {
                 lillyPad()
                 lilly()
                 //drawPath(path = petals.toPath().asComposePath(), color = Lilly1, style = Fill)
@@ -50,14 +58,13 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             )
         }
     } else {
-        Box(modifier.background(Start))
+        Box(
+            modifier
+                .background(Start)
+                .drawBehind {
+                    lillyPad(Ripple1, Stroke(width = 2f))
+                })
     }
-}
-
-@Preview
-@Composable
-fun PreviewFocusBox() {
-    FocusBox(modifier = Modifier.fillMaxSize())
 }
 
 val petals = RoundedPolygon.star(
@@ -68,17 +75,17 @@ val crown = RoundedPolygon.star(
     numVerticesPerRadius = 16, innerRadius = .8f
 )
 
-fun DrawScope.lillyPad() {
+fun DrawScope.lillyPad(color:Color = LillyPad2, style:DrawStyle = Fill) {
     translate(
         left = center.x - size.width / 4,
         top = center.y - size.height / 4
     ) {
         drawArc(
-            color = LillyPad2,
+            color = color,
             startAngle = 0f,
             sweepAngle = 330f,
             useCenter = true,
-            style = Fill,
+            style = style,
             size = Size(size.width / 2, size.width / 2)
         )
     }
@@ -106,7 +113,7 @@ internal fun PolygonComposableImpl(
             .drawWithContent {
                 drawContent()
                 val sizedPolygon = sizedPolygonCache.getOrPut(size) {
-                    val matrix = calculateMatrix(TheBounds, size.width/2, size.height)
+                    val matrix = calculateMatrix(TheBounds, size.width / 2, size.height)
                     RoundedPolygon(shape).apply { transform(matrix) }
                 }
                 drawPath(
@@ -130,5 +137,17 @@ internal fun calculateMatrix(bounds: RectF, width: Float, height: Float): Matrix
     matrix.setTranslate(-newLeft, -newTop)
     matrix.postScale(scale, scale)
     return matrix
+}
+
+@Preview
+@Composable
+fun PreviewFocusBox() {
+    FocusBox(modifier = Modifier.fillMaxSize())
+}
+
+@Preview
+@Composable
+fun PreviewFocusBoxPause() {
+    FocusBox(modifier = Modifier.fillMaxSize(), isRunning = false)
 }
 
