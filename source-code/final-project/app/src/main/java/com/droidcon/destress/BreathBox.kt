@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.tooling.preview.Preview
 import com.droidcon.destress.ui.theme.Cloud
@@ -26,6 +27,7 @@ import com.droidcon.destress.ui.theme.Sun2
 
 val skyBrush = Brush.radialGradient(listOf(Cloud, Sky))
 val sunBrush = Brush.radialGradient(listOf(Sun2, Sun1))
+
 @Composable
 fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     val infiniteTransition = rememberInfiniteTransition(label = "breath transition")
@@ -39,9 +41,7 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
     )
     if (isRunning) {
         Canvas(modifier.background(skyBrush)) {
-            withTransform({
-                scale(scaleX = breathPulse, scaleY = breathPulse)
-            }) {
+            scale(scaleX = breathPulse, scaleY = breathPulse) {
                 drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
             }
         }
