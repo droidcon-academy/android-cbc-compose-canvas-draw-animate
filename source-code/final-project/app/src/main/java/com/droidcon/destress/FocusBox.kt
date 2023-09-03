@@ -2,13 +2,13 @@ package com.droidcon.destress
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -46,6 +47,7 @@ import com.droidcon.destress.ui.theme.LillyPad2
 import com.droidcon.destress.ui.theme.Pond3
 import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Start
+import kotlinx.coroutines.launch
 import kotlin.math.min
 
 @Composable
@@ -67,27 +69,9 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             ), label = "Lilly rotate "
         )
 
-        var rippleVisible by remember { mutableStateOf(false) }
         var rippleOffset by remember { mutableStateOf(Offset.Zero) }
-        val transition = updateTransition(targetState = rippleVisible, label = "ripple animation")
-        val rippleRadius: Float by transition.animateFloat(
-            transitionSpec = { tween(4000) }, label = "ripple grow"
-        ) { visible ->
-            if (visible) {
-                50f
-            } else {
-                1000f
-            }
-        }
-        val rippleAlpha: Float by transition.animateFloat(
-            transitionSpec = { tween(4000) }, label = "ripple alpha"
-        ) { visible ->
-            if (visible) {
-                1f
-            } else {
-                0f
-            }
-        }
+        val rippleRadius = remember { Animatable(1f) }
+        val scope = rememberCoroutineScope()
 
         Box(
             modifier
@@ -97,15 +81,17 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
                     detectTapGestures { offset ->
                         // remember the offset and start the ripple
                         rippleOffset = offset
-                        rippleVisible = !rippleVisible
+                        scope.launch {
+                            rippleRadius.snapTo(50f)
+                            rippleRadius.animateTo(10000f, animationSpec = tween(10000))
+                        }
                     }
                 }
                 .drawBehind {
                     drawCircle(
                         color = Ripple1,
                         center = rippleOffset,
-                        radius = rippleRadius,
-                        alpha = rippleAlpha,
+                        radius = rippleRadius.value,
                         style = Stroke(width = 1.dp.toPx())
                     )
                     val sizedLilly = sizedLillyCache.getOrPut(size) {
