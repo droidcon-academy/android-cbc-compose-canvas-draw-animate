@@ -8,14 +8,19 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -27,7 +32,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.star
@@ -60,11 +67,47 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             ), label = "Lilly rotate "
         )
 
+        var rippleVisible by remember { mutableStateOf(false) }
+        var rippleOffset by remember { mutableStateOf(Offset.Zero) }
+        val transition = updateTransition(targetState = rippleVisible, label = "ripple animation")
+        val rippleRadius: Float by transition.animateFloat(
+            transitionSpec = { tween(4000) }, label = "ripple grow"
+        ) { visible ->
+            if (visible) {
+                50f
+            } else {
+                1000f
+            }
+        }
+        val rippleAlpha: Float by transition.animateFloat(
+            transitionSpec = { tween(4000) }, label = "ripple alpha"
+        ) { visible ->
+            if (visible) {
+                1f
+            } else {
+                0f
+            }
+        }
+
         Box(
             modifier
                 .fillMaxSize()
                 .background(Pond3)
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        // remember the offset and start the ripple
+                        rippleOffset = offset
+                        rippleVisible = !rippleVisible
+                    }
+                }
                 .drawBehind {
+                    drawCircle(
+                        color = Ripple1,
+                        center = rippleOffset,
+                        radius = rippleRadius,
+                        alpha = rippleAlpha,
+                        style = Stroke(width = 1.dp.toPx())
+                    )
                     val sizedLilly = sizedLillyCache.getOrPut(size) {
                         val matrix = calculateMatrix(width = size.width, height = size.height)
                         RoundedPolygon(petals).apply { transform(matrix) }
@@ -136,6 +179,7 @@ fun DrawScope.lillyPad(color: Color = LillyPad2, style: DrawStyle = Fill) {
 
 val lillyBrush = Brush.radialGradient(listOf(Lilly2, Lilly1))
 val lillyCoreBrush = Brush.radialGradient(listOf(LillyCore2, LillyCore1))
+
 
 //by default the library creates canonical shapes with a radius of 1 around a center at (0, 0)
 //https://medium.com/androiddevelopers/the-shape-of-things-to-come-1c7663d9dbc0
