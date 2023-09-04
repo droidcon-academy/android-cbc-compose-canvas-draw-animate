@@ -1,5 +1,6 @@
 package com.droidcon.destress.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,12 +30,15 @@ fun BreathScreen(durationSeconds: Int, activityComplete: (Int) -> Unit) {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BreathBox(
-            isRunning = isRunning,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-        )
+        ) {
+            BreathBox(
+                isRunning = isRunning
+            )
+        }
         Text(
             modifier = Modifier.padding(8.dp),
             textAlign = TextAlign.Center,

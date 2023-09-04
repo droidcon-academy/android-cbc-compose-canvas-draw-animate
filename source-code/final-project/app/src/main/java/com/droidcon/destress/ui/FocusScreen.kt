@@ -1,5 +1,6 @@
 package com.droidcon.destress.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,12 +30,13 @@ fun FocusScreen(durationSeconds: Int, activityComplete: (Int) -> Unit) {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        FocusBox(
-            isRunning = isRunning,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-        )
+        ) {
+            FocusBox(isRunning = isRunning)
+        }
         Text(
             modifier = Modifier.padding(8.dp),
             textAlign = TextAlign.Center,

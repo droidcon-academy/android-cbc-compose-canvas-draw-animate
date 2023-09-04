@@ -2,6 +2,7 @@ package com.droidcon.destress
 
 import android.graphics.Matrix
 import android.graphics.RectF
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -52,87 +53,105 @@ import kotlin.math.min
 
 @Composable
 fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
-    if (isRunning) {
-        val sizedLillyCache = remember(petals) {
-            mutableMapOf<Size, RoundedPolygon>()
+    Crossfade(
+        targetState = isRunning,
+        label = "Crossfade focus",
+        animationSpec = tween(1_000, easing = FastOutSlowInEasing)
+    ) {
+        if (it) {
+            FocusRunning(modifier)
+        } else {
+            FocusNotRunning(modifier)
         }
-        val sizedLillyCrownCache = remember(crown) {
-            mutableMapOf<Size, RoundedPolygon>()
-        }
-        val lillyTransition = rememberInfiniteTransition(label = "focus transition")
-        val focusRotate by lillyTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 10f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(4_000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ), label = "Lilly rotate "
-        )
+    }
+}
 
-        var rippleOffset by remember { mutableStateOf(Offset.Zero) }
-        val rippleRadius = remember { Animatable(1f) }
-        val scope = rememberCoroutineScope()
+@Composable
+private fun FocusRunning(modifier: Modifier = Modifier) {
+    val sizedLillyCache = remember(petals) {
+        mutableMapOf<Size, RoundedPolygon>()
+    }
+    val sizedLillyCrownCache = remember(crown) {
+        mutableMapOf<Size, RoundedPolygon>()
+    }
+    val lillyTransition = rememberInfiniteTransition(label = "focus transition")
+    val focusRotate by lillyTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4_000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "Lilly rotate "
+    )
 
-        Box(
-            modifier
-                .fillMaxSize()
-                .background(Pond3)
-                .pointerInput(Unit) {
-                    detectTapGestures { offset ->
-                        // remember the offset and start the ripple
-                        rippleOffset = offset
-                        scope.launch {
-                            rippleRadius.snapTo(50f)
-                            rippleRadius.animateTo(10000f, animationSpec = tween(10000))
+    var rippleOffset by remember { mutableStateOf(Offset.Zero) }
+    val rippleRadius = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(Pond3)
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    // remember the offset and start the ripple
+                    rippleOffset = offset
+                    scope.launch {
+                        rippleRadius.snapTo(50f)
+                        rippleRadius.animateTo(10000f, animationSpec = tween(10000))
+                    }
+                }
+            }
+            .drawBehind {
+                drawCircle(
+                    color = Ripple1,
+                    center = rippleOffset,
+                    radius = rippleRadius.value,
+                    style = Stroke(width = 1.dp.toPx())
+                )
+                val sizedLilly = sizedLillyCache.getOrPut(size) {
+                    val matrix = calculateMatrix(width = size.width, height = size.height)
+                    RoundedPolygon(petals).apply { transform(matrix) }
+                }
+                val sizedCrown = sizedLillyCrownCache.getOrPut(size) {
+                    val matrix = calculateMatrix(width = size.width, height = size.height)
+                    RoundedPolygon(crown).apply { transform(matrix) }
+                }
+                rotate(focusRotate) {
+                    lillyPad()
+                    translate(left = -70f, top = -70f) {
+                        scale(scaleX = 0.75f, scaleY = 0.75f) {
+                            drawPath(
+                                path = sizedLilly
+                                    .toPath()
+                                    .asComposePath(),
+                                brush = lillyBrush
+                            )
+                        }
+                        scale(scaleX = 0.2f, scaleY = 0.2f) {
+                            drawPath(
+                                path = sizedCrown
+                                    .toPath()
+                                    .asComposePath(),
+                                brush = lillyCoreBrush
+                            )
                         }
                     }
                 }
-                .drawBehind {
-                    drawCircle(
-                        color = Ripple1,
-                        center = rippleOffset,
-                        radius = rippleRadius.value,
-                        style = Stroke(width = 1.dp.toPx())
-                    )
-                    val sizedLilly = sizedLillyCache.getOrPut(size) {
-                        val matrix = calculateMatrix(width = size.width, height = size.height)
-                        RoundedPolygon(petals).apply { transform(matrix) }
-                    }
-                    val sizedCrown = sizedLillyCrownCache.getOrPut(size) {
-                        val matrix = calculateMatrix(width = size.width, height = size.height)
-                        RoundedPolygon(crown).apply { transform(matrix) }
-                    }
-                    rotate(focusRotate) {
-                        lillyPad()
-                        translate(left = -70f, top = -70f) {
-                            scale(scaleX = 0.75f, scaleY = 0.75f) {
-                                drawPath(
-                                    path = sizedLilly
-                                        .toPath()
-                                        .asComposePath(),
-                                    brush = lillyBrush
-                                )
-                            }
-                            scale(scaleX = 0.2f, scaleY = 0.2f) {
-                                drawPath(
-                                    path = sizedCrown
-                                        .toPath()
-                                        .asComposePath(),
-                                    brush = lillyCoreBrush
-                                )
-                            }
-                        }
-                    }
-                })
+            }
+    )
+}
 
-    } else {
-        Box(
-            modifier
-                .background(Start)
-                .drawBehind {
-                    lillyPad(Ripple1, Stroke(width = 2f))
-                })
-    }
+@Composable
+private fun FocusNotRunning(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(Start)
+            .drawBehind {
+                lillyPad(Ripple1, Stroke(width = 2f))
+            }
+    )
 }
 
 val petals = RoundedPolygon.star(

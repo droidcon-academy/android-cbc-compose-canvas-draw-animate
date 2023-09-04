@@ -1,5 +1,6 @@
 package com.droidcon.destress
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -40,19 +41,30 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             repeatMode = RepeatMode.Reverse
         ), label = "sun size"
     )
-    if (isRunning) {
-        Canvas(modifier.background(skyBrush)) {
-            scale(scaleX = breathPulse, scaleY = breathPulse) {
-                drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
+    Crossfade(
+        targetState = isRunning,
+        label = "BreathBox crossfade",
+        animationSpec = tween(1_000, easing = FastOutSlowInEasing)
+    ) {
+        if (it) {
+            Canvas(
+                modifier
+                    .fillMaxSize()
+                    .background(skyBrush)
+            ) {
+                scale(scaleX = breathPulse, scaleY = breathPulse) {
+                    drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
+                }
             }
+        } else {
+            Box(
+                modifier
+                    .fillMaxSize()
+                    .background(Start)
+                    .drawBehind {
+                        drawCircle(Ripple1, size.width / 5, center = center, style = Stroke(2.0f))
+                    })
         }
-    } else {
-        Box(
-            modifier
-                .background(Start)
-                .drawBehind {
-                    drawCircle(Ripple1, size.width / 5, center = center, style = Stroke(2.0f))
-                })
     }
 }
 
