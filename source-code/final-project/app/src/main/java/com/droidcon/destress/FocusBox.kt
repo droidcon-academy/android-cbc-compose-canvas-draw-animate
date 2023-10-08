@@ -126,7 +126,7 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                                 path = sizedLily
                                     .toPath()
                                     .asComposePath(),
-                                brush = LilyBrush
+                                brush = lilyBrush
                             )
                         }
                         scale(scaleX = 0.2f, scaleY = 0.2f) {
@@ -134,7 +134,7 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                                 path = sizedCrown
                                     .toPath()
                                     .asComposePath(),
-                                brush = LilyCoreBrush
+                                brush = lilyCoreBrush
                             )
                         }
                     }
@@ -199,8 +199,8 @@ fun DrawScope.lilyPad(
     }
 }
 
-val LilyBrush = Brush.radialGradient(listOf(Lily2, Lily1))
-val LilyCoreBrush = Brush.radialGradient(listOf(LilyCore2, LilyCore1))
+val lilyBrush = Brush.radialGradient(listOf(Lily2, Lily1))
+val lilyCoreBrush = Brush.radialGradient(listOf(LilyCore2, LilyCore1))
 
 
 // by default the library creates canonical shapes with a radius of 1 around a center at (0, 0)
