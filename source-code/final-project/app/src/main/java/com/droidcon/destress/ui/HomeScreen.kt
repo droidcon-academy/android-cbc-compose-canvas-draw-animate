@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -26,21 +27,25 @@ import com.droidcon.destress.ui.theme.Sun2
 
 @Composable
 fun HomeScreen(setDuration: (Int) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
         Text(
             text = stringResource(R.string.welcome),
             style = MaterialTheme.typography.headlineMedium
         )
         Spacer(Modifier.size(16.dp))
         Text(
-            text = "There are two de-stress activities:",
+            text = stringResource(R.string.welcome_body),
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.size(16.dp))
         Row {
             Icon(
                 Icons.Filled.Face,
-                contentDescription = "Deep Breath Activity",
+                contentDescription = stringResource(R.string.deep_breath_activity),
                 tint = Sun2
             )
             Text("Deep Breath")
@@ -49,7 +54,7 @@ fun HomeScreen(setDuration: (Int) -> Unit) {
         Row {
             Icon(
                 Icons.Filled.Favorite,
-                contentDescription = "Focus Activity",
+                contentDescription = stringResource(R.string.focus_activity),
                 tint = Pond2
             )
             Text("Focus")
@@ -74,9 +79,9 @@ fun HomeScreen(setDuration: (Int) -> Unit) {
         Row {
             Icon(
                 Icons.Filled.DateRange,
-                contentDescription = "Activity History",
+                contentDescription = stringResource(R.string.activity_history),
             )
-            Text("Then See the history of your activities")
+            Text(stringResource(R.string.history_label))
         }
     }
 }

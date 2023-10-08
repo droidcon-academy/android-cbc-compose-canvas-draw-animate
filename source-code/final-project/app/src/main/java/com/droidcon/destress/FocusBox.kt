@@ -40,11 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.star
-import com.droidcon.destress.ui.theme.Lilly1
-import com.droidcon.destress.ui.theme.Lilly2
-import com.droidcon.destress.ui.theme.LillyCore1
-import com.droidcon.destress.ui.theme.LillyCore2
-import com.droidcon.destress.ui.theme.LillyPad2
+import com.droidcon.destress.ui.theme.Lily1
+import com.droidcon.destress.ui.theme.Lily2
+import com.droidcon.destress.ui.theme.LilyCore1
+import com.droidcon.destress.ui.theme.LilyCore2
+import com.droidcon.destress.ui.theme.LilyPad2
+import com.droidcon.destress.ui.theme.Pond1
 import com.droidcon.destress.ui.theme.Pond3
 import com.droidcon.destress.ui.theme.Ripple1
 import com.droidcon.destress.ui.theme.Start
@@ -68,20 +69,20 @@ fun FocusBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
 
 @Composable
 private fun FocusRunning(modifier: Modifier = Modifier) {
-    val sizedLillyCache = remember(petals) {
+    val sizedLilyCache = remember(petals) {
         mutableMapOf<Size, RoundedPolygon>()
     }
-    val sizedLillyCrownCache = remember(crown) {
+    val sizedLilyCrownCache = remember(crown) {
         mutableMapOf<Size, RoundedPolygon>()
     }
-    val lillyTransition = rememberInfiniteTransition(label = "focus transition")
-    val focusRotate by lillyTransition.animateFloat(
+    val lilyTransition = rememberInfiniteTransition(label = "focus transition")
+    val focusRotate by lilyTransition.animateFloat(
         initialValue = 0f,
         targetValue = 10f,
         animationSpec = infiniteRepeatable(
             animation = tween(4_000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
-        ), label = "Lilly rotate "
+        ), label = "Lily rotate "
     )
 
     var rippleOffset by remember { mutableStateOf(Offset.Zero) }
@@ -109,23 +110,23 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                     radius = rippleRadius.value,
                     style = Stroke(width = 1.dp.toPx())
                 )
-                val sizedLilly = sizedLillyCache.getOrPut(size) {
+                val sizedLily = sizedLilyCache.getOrPut(size) {
                     val matrix = calculateMatrix(width = size.width, height = size.height)
                     RoundedPolygon(petals).apply { transform(matrix) }
                 }
-                val sizedCrown = sizedLillyCrownCache.getOrPut(size) {
+                val sizedCrown = sizedLilyCrownCache.getOrPut(size) {
                     val matrix = calculateMatrix(width = size.width, height = size.height)
                     RoundedPolygon(crown).apply { transform(matrix) }
                 }
                 rotate(focusRotate) {
-                    lillyPad()
+                    lilyPad()
                     translate(left = -70f, top = -70f) {
                         scale(scaleX = 0.75f, scaleY = 0.75f) {
                             drawPath(
-                                path = sizedLilly
+                                path = sizedLily
                                     .toPath()
                                     .asComposePath(),
-                                brush = lillyBrush
+                                brush = LilyBrush
                             )
                         }
                         scale(scaleX = 0.2f, scaleY = 0.2f) {
@@ -133,7 +134,7 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                                 path = sizedCrown
                                     .toPath()
                                     .asComposePath(),
-                                brush = lillyCoreBrush
+                                brush = LilyCoreBrush
                             )
                         }
                     }
@@ -149,7 +150,11 @@ private fun FocusNotRunning(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(Start)
             .drawBehind {
-                lillyPad(Ripple1, Stroke(width = 2f))
+                lilyPad(
+                    color = Ripple1,
+                    colorShadow = Color.Transparent,
+                    style = Stroke(width = 2f)
+                )
             }
     )
 }
@@ -165,12 +170,24 @@ val crown = RoundedPolygon.star(
     innerRounding = CornerRounding(radius = 0.1f)
 )
 
-fun DrawScope.lillyPad(color: Color = LillyPad2, style: DrawStyle = Fill) {
+fun DrawScope.lilyPad(
+    color: Color = LilyPad2,
+    colorShadow: Color = Pond1,
+    style: DrawStyle = Fill
+) {
     val diameter = size.width * 0.6f
     translate(
         left = center.x - diameter / 2,
         top = center.y - diameter / 2
     ) {
+        drawArc(
+            color = colorShadow,
+            startAngle = 0f,
+            sweepAngle = 330f,
+            useCenter = true,
+            style = style,
+            size = Size(diameter + 10, diameter + 10)
+        )
         drawArc(
             color = color,
             startAngle = 0f,
@@ -182,12 +199,12 @@ fun DrawScope.lillyPad(color: Color = LillyPad2, style: DrawStyle = Fill) {
     }
 }
 
-val lillyBrush = Brush.radialGradient(listOf(Lilly2, Lilly1))
-val lillyCoreBrush = Brush.radialGradient(listOf(LillyCore2, LillyCore1))
+val LilyBrush = Brush.radialGradient(listOf(Lily2, Lily1))
+val LilyCoreBrush = Brush.radialGradient(listOf(LilyCore2, LilyCore1))
 
 
-//by default the library creates canonical shapes with a radius of 1 around a center at (0, 0)
-//https://medium.com/androiddevelopers/the-shape-of-things-to-come-1c7663d9dbc0
+// by default the library creates canonical shapes with a radius of 1 around a center at (0, 0)
+// https://medium.com/androiddevelopers/the-shape-of-things-to-come-1c7663d9dbc0
 private fun calculateMatrix(
     bounds: RectF = RectF(-1f, -1f, 1f, 1f),
     width: Float,
