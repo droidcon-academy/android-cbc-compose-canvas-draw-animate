@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DeStress</string>
+    <string name="welcome">"Welcome "</string>
+    <string name="start">Start</string>
+    <string name="time_label">Choose how long you want to de-stress</string>
+    <string name="seconds">Seconds</string>
+    <string name="breath_instructions">Take a deep breath, In… Out</string>
+    <string name="focus_instructions">Focus on your breath.\nIf a thought pops up, gently let it go.</string>
+    <string name="history_label">See the history of your activities</string>
+    <string name="welcome_body">There are two de-stress activities:</string>
+    <string name="deep_breath_activity">Deep Breath Activity</string>
+    <string name="focus_activity">Focus Activity</string>
+    <string name="activity_history">Activity History</string>
+</resources>
