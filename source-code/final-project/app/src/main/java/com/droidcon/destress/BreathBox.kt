@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.tooling.preview.Preview
 import com.droidcon.destress.ui.theme.Cloud
 import com.droidcon.destress.ui.theme.Ripple1
@@ -26,12 +27,26 @@ import com.droidcon.destress.ui.theme.Start
 import com.droidcon.destress.ui.theme.Sun1
 import com.droidcon.destress.ui.theme.Sun2
 
-
 val skyBrush = Brush.radialGradient(listOf(Cloud, Sky))
 val sunBrush = Brush.radialGradient(listOf(Sun2, Sun1))
 
 @Composable
 fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
+    Crossfade(
+        targetState = isRunning,
+        label = "BreathBox cross fade",
+        animationSpec = tween(1_000, easing = FastOutSlowInEasing)
+    ) {
+        if (it) {
+            SkySun(modifier)
+        } else {
+            ShadowSun(modifier = modifier)
+        }
+    }
+}
+
+@Composable
+fun SkySun(modifier: Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "breath transition")
     val breathPulse by infiniteTransition.animateFloat(
         initialValue = 0.75f,
@@ -41,31 +56,40 @@ fun BreathBox(modifier: Modifier = Modifier, isRunning: Boolean = true) {
             repeatMode = RepeatMode.Reverse
         ), label = "sun size"
     )
-    Crossfade(
-        targetState = isRunning,
-        label = "BreathBox crossfade",
-        animationSpec = tween(1_000, easing = FastOutSlowInEasing)
+    Canvas(
+        modifier
+            .fillMaxSize()
+            .background(skyBrush)
     ) {
-        if (it) {
-            Canvas(
-                modifier
-                    .fillMaxSize()
-                    .background(skyBrush)
-            ) {
-                scale(scaleX = breathPulse, scaleY = breathPulse) {
-                    drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
-                }
-            }
-        } else {
-            Box(
-                modifier
-                    .fillMaxSize()
-                    .background(Start)
-                    .drawBehind {
-                        drawCircle(Ripple1, size.width / 5, center = center, style = Stroke(2.0f))
-                    })
+        scale(scaleX = breathPulse, scaleY = breathPulse) {
+            drawCircle(brush = sunBrush, radius = size.width / 5, center = center)
         }
     }
+}
+
+@Composable
+fun ShadowSun(modifier: Modifier) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(Start)
+            .drawBehind {
+                drawCircle(Ripple1, size.width / 5, center = center, style = Stroke(2.0f))
+            })
+
+}
+
+@Preview
+@Composable
+fun PreviewSkySun() {
+    SkySun(modifier = Modifier.fillMaxSize())
+}
+
+@Preview
+@Composable
+fun PreviewShadowSun() {
+    ShadowSun(modifier = Modifier.fillMaxSize())
+
 }
 
 @Preview
@@ -79,3 +103,4 @@ fun PreviewBreathBox() {
 fun PreviewBreathBoxPause() {
     BreathBox(modifier = Modifier.fillMaxSize(), isRunning = false)
 }
+
