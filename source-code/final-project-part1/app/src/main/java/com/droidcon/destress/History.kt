@@ -81,8 +81,8 @@ fun History(
 }
 
 fun DrawScope.graphPaper(days: Int) {
-    val barWidthPx = 1.dp.toPx()
-    drawRect(Grid, style = Stroke(barWidthPx))
+    val linedWidthPx = 1.dp.toPx()
+    drawRect(Grid, style = Stroke(linedWidthPx))
     val horizontalLines = 3
     val sectionSize = size.height / (horizontalLines + 1)
     repeat(horizontalLines) { i ->
@@ -91,7 +91,7 @@ fun DrawScope.graphPaper(days: Int) {
             Grid,
             start = Offset(0F, startY),
             end = Offset(size.width, startY),
-            strokeWidth = barWidthPx
+            strokeWidth = linedWidthPx
         )
     }
     val verticalSize = size.width / days
@@ -101,10 +101,9 @@ fun DrawScope.graphPaper(days: Int) {
             Grid,
             start = Offset(startX, 0F),
             end = Offset(startX, size.height),
-            strokeWidth = barWidthPx
+            strokeWidth = linedWidthPx
         )
     }
-
 }
 
 @Preview
