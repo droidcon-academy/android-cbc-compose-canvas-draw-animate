@@ -8,10 +8,6 @@ Canvas(
 
 }
 
-// Some calculations
-    val maxEventsPerDay = events.flatMap { listOf(it.focusCount, it.breathCount) }.max()
-    val days = events.size
-    val barWidth = size.width / days
 
 // graph paper Outline
 fun DrawScope.graphPaper(days: Int) {
@@ -45,7 +41,10 @@ fun DrawScope.graphPaper(days: Int) {
     }
 
 // Bar graph calculations
-
+// Some calculations
+    val maxEventsPerDay = events.flatMap { listOf(it.focusCount, it.breathCount) }.max()
+    val days = events.size
+    val barWidth = size.width / days
         if (maxEventsPerDay > 0) {
             repeat(days) { day ->// this changes to a loop through the days
                 val focusCount = events[day].focusCount

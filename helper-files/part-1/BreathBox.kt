@@ -11,6 +11,13 @@ fun ShadowSun(modifier: Modifier) {
 
 }
 
+@Preview
+@Composable
+fun PreviewShadowSun() {
+    ShadowSun(modifier = Modifier.fillMaxSize())
+
+}
+
 // Basic Running state - Sky and sun
 @Composable
 fun SkySun(modifier: Modifier) {
@@ -21,6 +28,12 @@ fun SkySun(modifier: Modifier) {
     ) {
         drawCircle(color = Sun2, radius = size.width / 5, center = center)
     }
+}
+
+@Preview
+@Composable
+fun PreviewSkySun() {
+    SkySun(modifier = Modifier.fillMaxSize())
 }
 
 // Gradient brushes
