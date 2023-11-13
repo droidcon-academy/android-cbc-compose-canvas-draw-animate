@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -103,6 +104,9 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                     }
                 }
             }
+            .graphicsLayer {
+                rotationZ = focusRotate
+            }
             .drawBehind {
                 drawCircle(
                     color = Ripple1,
@@ -118,25 +122,23 @@ private fun FocusRunning(modifier: Modifier = Modifier) {
                     val matrix = calculateMatrix(width = size.width, height = size.height)
                     RoundedPolygon(crown).apply { transform(matrix) }
                 }
-                rotate(focusRotate) {
-                    lilyPad()
-                    translate(left = -70f, top = -70f) {
-                        scale(scaleX = 0.75f, scaleY = 0.75f) {
-                            drawPath(
-                                path = sizedLily
-                                    .toPath()
-                                    .asComposePath(),
-                                brush = lilyBrush
-                            )
-                        }
-                        scale(scaleX = 0.2f, scaleY = 0.2f) {
-                            drawPath(
-                                path = sizedCrown
-                                    .toPath()
-                                    .asComposePath(),
-                                brush = lilyCoreBrush
-                            )
-                        }
+                lilyPad()
+                translate(left = -70f, top = -70f) {
+                    scale(scaleX = 0.75f, scaleY = 0.75f) {
+                        drawPath(
+                            path = sizedLily
+                                .toPath()
+                                .asComposePath(),
+                            brush = lilyBrush
+                        )
+                    }
+                    scale(scaleX = 0.2f, scaleY = 0.2f) {
+                        drawPath(
+                            path = sizedCrown
+                                .toPath()
+                                .asComposePath(),
+                            brush = lilyCoreBrush
+                        )
                     }
                 }
             }
